@@ -63,37 +63,14 @@ app.get("/login",(req, res) => {
   });
 });
 
-/* app.post('/login', 
-  passport.authenticate('local', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/');
-  }); */
-
 app.post("/login",(req,res)=>{
-  console.log(`\nPOST req.isAuthenticated(): ${req.isAuthenticated()}`);
-  console.log(`\nemail: ${req.body.username}`);
-  console.log(`password: ${req.body.password}\n`);
-
-  const user = new User({
-    username: req.body.username,
-    password: req.body.password
+  // It reads automatically the req.body and creates the user to authenticate
+  passport.authenticate("local", {failureRedirect:"/login"})(req, res, () => {
+    //The callback is only triggered if the authentication is successful
+    console.log("User successfully authenticated\n");
+    res.redirect("/secrets");
   });
-
-  // Now we're going to use passport to login and authenticate the user
-  // From the passport module:
-  req.login(user, (err) => {
-    if (!err) {
-      // The arguments are the req and res values from post((req,res)):
-      passport.authenticate("local", {failureRedirect:"/login"})(req, res, () => {
-        //The callback is only triggered if the authentication is successful
-        console.log("User successfully authenticated\n");
-        res.redirect("/secrets");
-      });
-    } else {
-      console.log(err);
-    }
-  });
-}); 
+});
 /////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////
