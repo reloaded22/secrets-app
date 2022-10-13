@@ -59,7 +59,6 @@ app.get("/",(req,res)=>{
 app.get("/login",(req, res) => {
   loginError = "";
   res.render("login", {
-    loggedIn: req.isAuthenticated(),
     loginError: loginError,
   });
 });
@@ -114,7 +113,7 @@ app.get("/secrets",(req,res)=>{
 
 /////////////////////////////////////////////////////////////////////
 app.get("/register",(req, res) => {
-  res.render("register", { loggedIn: req.isAuthenticated() });
+  res.render("register");
 });
 
 app.post("/register",(req,res)=>{
