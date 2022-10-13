@@ -47,20 +47,25 @@ passport.deserializeUser(User.deserializeUser());
 
 let loginError = "";
 
-app.route("/") //////////////////////////////////////////////////////
-
-.get((req,res)=>{
+/////////////////////////////////////////////////////////////////////
+app.get("/",(req,res)=>{
     res.render("home");
-}); /////////////////////////////////////////////////////////////////
+}); 
+/////////////////////////////////////////////////////////////////////
 
-app.route("/login") /////////////////////////////////////////////////
-
-.get((req, res) => {
+/////////////////////////////////////////////////////////////////////
+app.get("/login",(req, res) => {
   loginError = "";
   res.render("login", { loginError: loginError });
-})
+});
 
-.post((req,res)=>{
+/* app.post('/login', 
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  }); */
+
+app.post("/login",(req,res)=>{
   console.log(`email: ${req.body.username}`);
   console.log(`password: ${req.body.password}\n`);
 
@@ -69,23 +74,11 @@ app.route("/login") /////////////////////////////////////////////////
     password: req.body.password
   });
 
-  // https://forum.freecodecamp.org/t/what-does-passport-authenticate-return/355533/2
-
-  /* passport.authenticate("local", {
-  successRedirect: "/",
-  failureRedirect: "/login",
-  failureFlash: true,
-}); */
-
-/* app.get('/', (req, res, next) => {
-   passport.authenticate('local', {}, (err, user, info) => { ... })(req, res, next);
-}) */
-
   // Now we're going to use passport to login and authenticate the user
   // From the passport module:
   req.login(user, (err) => {
     if (!err) {
-      // Literally the arguments are the req and res values from post((req,res)):
+      // The arguments are the req and res values from post((req,res)):
       passport.authenticate("local", {failureRedirect:"/login"})(req, res, () => {
         //The callback is only triggered if the authentication is successful
         console.log("User successfully authenticated\n");
@@ -95,11 +88,11 @@ app.route("/login") /////////////////////////////////////////////////
       console.log(err);
     }
   });
-}); /////////////////////////////////////////////////////////////////
+}); 
+/////////////////////////////////////////////////////////////////////
 
-app.route("/secrets") ///////////////////////////////////////////////
-
-.get((req,res)=>{
+/////////////////////////////////////////////////////////////////////
+app.get("/secrets",(req,res)=>{
   // Now we are NOT going to check if the user is logged in because 
   // this page is free for all users to see all the secrets posted
 /*   if (req.isAuthenticated()) {
@@ -119,15 +112,15 @@ app.route("/secrets") ///////////////////////////////////////////////
       }
     }
   })
-}); /////////////////////////////////////////////////////////////////
+}); 
+/////////////////////////////////////////////////////////////////////
 
-app.route("/register") //////////////////////////////////////////////
-
-.get((req, res) => {
+/////////////////////////////////////////////////////////////////////
+app.get("/register",(req, res) => {
   res.render("register");
-})
+});
 
-.post((req,res)=>{
+app.post("/register",(req,res)=>{
 
   User.register({username: req.body.username}, req.body.password, (err,user)=>{
     if (!err) {
@@ -142,11 +135,11 @@ app.route("/register") //////////////////////////////////////////////
     };
   })
 
-}); /////////////////////////////////////////////////////////////////
+}); 
+/////////////////////////////////////////////////////////////////////
 
-app.route("/logout") ////////////////////////////////////////////////
-
-.get((req,res)=>{
+/////////////////////////////////////////////////////////////////////
+app.get("/logout",(req,res)=>{
   // Here we're going to de-authenticate our user and end his session
   //From the passport documentation:
   req.logOut((err)=>{
@@ -158,11 +151,11 @@ app.route("/logout") ////////////////////////////////////////////////
     };
   });
   
-}); /////////////////////////////////////////////////////////////////
+}); 
+/////////////////////////////////////////////////////////////////////
 
-app.route("/submit") ////////////////////////////////////////////////
-
-.get((req,res)=>{
+/////////////////////////////////////////////////////////////////////
+app.get("/submit",(req,res)=>{
   // Here we're going to check if the user is authenticated, that is,
   // if the user is already logged in
   if (req.isAuthenticated()) {
@@ -175,7 +168,7 @@ app.route("/submit") ////////////////////////////////////////////////
   
 })
 
-.post((req,res)=>{
+app.post("/submit",(req,res)=>{
   // To know which user is the current one we can use the passport module
   // which saves the user's details into the request variable
   // console.log(req.user);
@@ -214,7 +207,8 @@ app.route("/submit") ////////////////////////////////////////////////
     }
   );
 
-}); /////////////////////////////////////////////////////////////////
+}); 
+/////////////////////////////////////////////////////////////////////
 
 app.listen("3000", ()=>{
     console.log("Server running on port 3000 🚀\n");
