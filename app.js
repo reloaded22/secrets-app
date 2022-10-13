@@ -14,50 +14,46 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
-/////////////////////////////////////////////////////
-// Place to use the express session module //////////
+/////////////////////////////////////////////////////////////////////
+// Use the express-session module ///////////////////////////////////
 app.use(session({
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false
 }));
-/////////////////////////////////////////////////////
-// Place to initialize passport /////////////////////
+/////////////////////////////////////////////////////////////////////
+// Initialize passport //////////////////////////////////////////////
 app.use(passport.initialize());
 app.use(passport.session());
-/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
 mongoose.connect("mongodb://localhost:27017/userDB");
 // https://mongoosejs.com/docs/5.x/docs/deprecations.html
 // mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema({
-    email: String,
-    password: String,
-    secrets: []
+  email: String,
+  password: String,
+  secrets: []
 });
-
-// Place to use the passport local mongoose module //
+// Use the passport-local-mongoose module ///////////////////////////
 userSchema.plugin(passportLocalMongoose);
-
 const User = new mongoose.model("User", userSchema);
-
+// Use the passport module //////////////////////////////////////////
 passport.use(User.createStrategy());
-
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
-/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 
 let loginError = "";
 
-app.route("/")
+app.route("/") //////////////////////////////////////////////////////
 
 .get((req,res)=>{
     res.render("home");
-});
+}); /////////////////////////////////////////////////////////////////
 
-app.route("/login")
+app.route("/login") /////////////////////////////////////////////////
 
 .get((req, res) => {
   loginError = "";
@@ -99,9 +95,9 @@ app.route("/login")
       console.log(err);
     }
   });
-});
+}); /////////////////////////////////////////////////////////////////
 
-app.route("/secrets")
+app.route("/secrets") ///////////////////////////////////////////////
 
 .get((req,res)=>{
   // Now we are NOT going to check if the user is logged in because 
@@ -123,9 +119,9 @@ app.route("/secrets")
       }
     }
   })
-});
+}); /////////////////////////////////////////////////////////////////
 
-app.route("/register")
+app.route("/register") //////////////////////////////////////////////
 
 .get((req, res) => {
   res.render("register");
@@ -146,9 +142,9 @@ app.route("/register")
     };
   })
 
-});
+}); /////////////////////////////////////////////////////////////////
 
-app.route("/logout")
+app.route("/logout") ////////////////////////////////////////////////
 
 .get((req,res)=>{
   // Here we're going to de-authenticate our user and end his session
@@ -162,10 +158,9 @@ app.route("/logout")
     };
   });
   
+}); /////////////////////////////////////////////////////////////////
 
-});
-
-app.route("/submit")
+app.route("/submit") ////////////////////////////////////////////////
 
 .get((req,res)=>{
   // Here we're going to check if the user is authenticated, that is,
@@ -219,14 +214,12 @@ app.route("/submit")
     }
   );
 
-});
-
-
+}); /////////////////////////////////////////////////////////////////
 
 app.listen("3000", ()=>{
     console.log("Server running on port 3000 🚀\n");
 });
 
-//////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 // Password Documentation:
 // https://www.passportjs.org/tutorials/password/
