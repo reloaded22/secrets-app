@@ -45,18 +45,23 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 /////////////////////////////////////////////////////////////////////
 
+// Global Variables /////////////////////////////////////////////////
 let loginError = "";
+/////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////
 app.get("/",(req,res)=>{
-    res.render("home");
+  res.render("home", {loggedIn: req.isAuthenticated()});
 }); 
 /////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////
 app.get("/login",(req, res) => {
   loginError = "";
-  res.render("login", { loginError: loginError });
+  res.render("login", {
+    loggedIn: req.isAuthenticated(),
+    loginError: loginError,
+  });
 });
 
 /* app.post('/login', 
@@ -66,7 +71,8 @@ app.get("/login",(req, res) => {
   }); */
 
 app.post("/login",(req,res)=>{
-  console.log(`email: ${req.body.username}`);
+  console.log(`\nPOST req.isAuthenticated(): ${req.isAuthenticated()}`);
+  console.log(`\nemail: ${req.body.username}`);
   console.log(`password: ${req.body.password}\n`);
 
   const user = new User({
@@ -93,22 +99,13 @@ app.post("/login",(req,res)=>{
 
 /////////////////////////////////////////////////////////////////////
 app.get("/secrets",(req,res)=>{
-  // Now we are NOT going to check if the user is logged in because 
-  // this page is free for all users to see all the secrets posted
-/*   if (req.isAuthenticated()) {
-    console.log("User is already logged in\n");
-    res.render("secrets");
-  } else {
-    console.log("User needs to login to see the requested page\n");
-    res.redirect("/login");
-  }; */
 
   User.find((err,users)=>{
     if (err) {
       console.log(err);
     } else {
       if (users) {
-        res.render("secrets", {users: users});
+        res.render("secrets", {users: users, loggedIn: req.isAuthenticated()});
       }
     }
   })
@@ -117,7 +114,7 @@ app.get("/secrets",(req,res)=>{
 
 /////////////////////////////////////////////////////////////////////
 app.get("/register",(req, res) => {
-  res.render("register");
+  res.render("register", { loggedIn: req.isAuthenticated() });
 });
 
 app.post("/register",(req,res)=>{
@@ -160,7 +157,7 @@ app.get("/submit",(req,res)=>{
   // if the user is already logged in
   if (req.isAuthenticated()) {
     console.log("User is already logged in\n");
-    res.render("submit");
+    res.render("submit", { loggedIn: req.isAuthenticated() });
   } else {
     console.log("User needs to login to see the requested page\n");
     res.redirect("/login");
