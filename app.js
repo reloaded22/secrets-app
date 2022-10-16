@@ -51,7 +51,18 @@ let loginError = "";
 
 /////////////////////////////////////////////////////////////////////
 app.get("/",(req,res)=>{
-  res.render("home", {loggedIn: req.isAuthenticated()});
+    User.find((err, users) => {
+      if (err) {
+        console.log(err);
+      } else {
+        if (users) {
+          res.render("home", {
+            users: users,
+            loggedIn: req.isAuthenticated(),
+          });
+        }
+      }
+    });
 }); 
 /////////////////////////////////////////////////////////////////////
 
@@ -147,7 +158,7 @@ app.post("/submit",(req,res)=>{
   // console.log(req.user);
 
   // First way: (My way ===> Updating with MongoDB)
-/*   User.updateOne(
+  User.updateOne(
     { _id: req.user._id },
     { $push: { secrets: req.body.secret } },
     (err) => {
@@ -158,10 +169,10 @@ app.post("/submit",(req,res)=>{
         res.redirect("/submit");
       }
     }
-  ); */
+  );
 
   // Second way: (Updating with JavaScript array methods and saving modified document with save())
-    User.findOne(
+/*     User.findOne(
     {_id: req.user._id},
     (err,user)=>{
       if (err) {
@@ -178,9 +189,37 @@ app.post("/submit",(req,res)=>{
         }
       }
     }
-  );
+  ); */
 
 }); 
+/////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////
+app.get("/my-secrets", (req,res) => {
+  if (req.isAuthenticated()) {  
+    console.log(req.user.secrets);
+    res.render("my-secrets", {
+      secrets: req.user.secrets,
+      loggedIn: req.isAuthenticated(),
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
+/////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////
+app.get("/my-profile", (req,res) => {
+  if (req.isAuthenticated()) {  
+    console.log(req.user);
+    res.render("my-profile", {
+      email: req.user.username,
+      loggedIn: req.isAuthenticated(),
+    });
+  } else {
+    res.redirect("/login");
+  }
+});
 /////////////////////////////////////////////////////////////////////
 
 app.listen("3000", ()=>{

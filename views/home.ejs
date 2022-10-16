@@ -6,6 +6,35 @@
   <h1 class="display-3">Secrets</h1>
   <p class="lead">Don't keep your secrets, share them anonymously!</p>
   <hr>
+  <div id="carouselExampleSlidesOnly" class="carousel slide border border-5 border-danger" data-bs-ride="carousel" data-bs-interval="2000" data-bs-pause="false">
+    <div class="carousel-inner">    
+      <div class="row g-2">
+        <%let count = -1%>
+        <%users.forEach((user, i)=>{%>
+          <%user.secrets.forEach((secret)=>{%>
+            <%count += 1%>
+            <% if (count%2 === 0) { %>
+              <div class="carousel-item active col-3 col-lg-2 text-capitalize text-danger">
+                <div class="card bg-dark h-100 d-block w-100">
+                  <div class="card-body d-flex align-items-center justify-content-center">
+                    <h5 class="card-title"><%=secret%></h5>
+                  </div>
+                </div>
+              </div>
+            <%} else {%>
+              <div class="carousel-item active col-3 col-lg-2 text-capitalize text-info">
+                <div class="card bg-dark h-100">
+                  <div class="card-body d-flex align-items-center justify-content-center">
+                    <h5 class="card-title"><%=secret%></h5>
+                  </div>
+                </div>
+              </div>
+            <%}%>
+          <%})%>
+        <%})%>
+      </div>
+    </div>
+  </div>
 </div>
 
 <%- include('partials/footer') %>
