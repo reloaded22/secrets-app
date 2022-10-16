@@ -1,18 +1,17 @@
-html {
-  position: relative;
-}
-
 body {
+  position: relative;
+  min-height: 100vh;
   background-color: #E8ECEF;
 }
 
-.centered {
-    padding-top: 200px;
-    text-align: center;
+.page-content {
+  padding-bottom: 80px;
 }
 
 .footer {
-  position: initial;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
   height: 60px;
   line-height: 30px;
 }
