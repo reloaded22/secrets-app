@@ -41,10 +41,6 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 /////////////////////////////////////////////////////////////////////
 
-// Global Variables /////////////////////////////////////////////////
-let loginError = "";
-/////////////////////////////////////////////////////////////////////
-
 /////////////////////////////////////////////////////////////////////
 app.get("/",(req,res)=>{
     User.find((err, users) => {
@@ -63,20 +59,32 @@ app.get("/",(req,res)=>{
 /////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////
+let loginError = "";
 app.get("/login",(req, res) => {
-  loginError = "";
   res.render("login", {
     loginError: loginError,
   });
 });
 
-app.post("/login",(req,res)=>{
-  // It reads automatically the req.body and creates the user to authenticate
-  passport.authenticate("local", {failureRedirect:"/login"})(req, res, () => {
-    //The callback is only triggered if the authentication is successful
-    console.log("User successfully authenticated\n");
-    res.redirect("/secrets");
-  });
+app.post("/login", (req, res) => {
+  passport.authenticate("local",
+      (err, user, options) => {
+        if (user) {
+          console.log(req.isAuthenticated());
+          req.login(user, (error)=>{
+            if (error) {
+              res.send(error);
+            } else {
+              console.log("Successfully authenticated");
+              console.log(req.isAuthenticated());
+              res.redirect("/secrets");
+            };
+          });
+        } else {
+          console.log(options.message);
+          res.render("login", { loginError: options.message });
+        };
+  })(req, res);
 });
 /////////////////////////////////////////////////////////////////////
 
@@ -120,8 +128,7 @@ app.post("/register",(req,res)=>{
 
 /////////////////////////////////////////////////////////////////////
 app.get("/logout",(req,res)=>{
-  // Here we're going to de-authenticate our user and end his session
-  //From the passport documentation:
+
   req.logOut((err)=>{
     if (!err) {
       console.log("Successfully logged out\n");
@@ -136,8 +143,7 @@ app.get("/logout",(req,res)=>{
 
 /////////////////////////////////////////////////////////////////////
 app.get("/submit",(req,res)=>{
-  // Here we're going to check if the user is authenticated, that is,
-  // if the user is already logged in
+
   if (req.isAuthenticated()) {
     console.log("User is already logged in\n");
     res.render("submit", { loggedIn: req.isAuthenticated() });
@@ -149,9 +155,6 @@ app.get("/submit",(req,res)=>{
 });
 
 app.post("/submit",(req,res)=>{
-  // To know which user is the current one we can use the passport module
-  // which saves the user's details into the request variable
-  // console.log(req.user);
 
   // First way:
   User.updateOne(
@@ -328,4 +331,4 @@ app.listen("3000", ()=>{
 // Password Documentation:
 // https://www.passportjs.org/tutorials/password/
 // The passport module saves the user's details into the request variable
-// req.user
+// req.user => This gives you the details of the user currently authenticated
