@@ -1,45 +1,38 @@
-  <header class="p-3 bg-dark text-white">
-    <div class="container">
-      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-          <i class="fas fa-key"></i>
+<header class="py-3 bg-dark text-white">
+  <div class="d-flex align-items-center justify-content-between">
+    <a href="/" class="text-white text-decoration-none col-3 col-lg-2">
+      <i class="fas fa-key fa-2x ms-3"></i>
+    </a>
+
+    <ul class="nav">
+      <li><a href="/" class="nav-link px-2 text-white">Home</a></li>
+      <li><a href="/secrets" class="nav-link px-2 text-white">Secrets</a></li>
+      <li><a href="#" class="nav-link px-2 text-white">About</a></li>
+    </ul>
+    
+    <div class="col-3 col-lg-2 text-center">
+      <% if (!loggedIn) {%>
+        <!-- If the user is NOT logged in -->
+        <!-- <div class="border"> -->
+          <a class="btn btn-outline-light btn-sm w-75" href="/login" role="button">Login</a>
+          <a class="btn btn-warning btn-sm w-75" href="/register" role="button">Sign-up</a>
+        <!-- </div> -->
+      <%} else {%>
+      <!-- If the user IS logged in -->
+      <div class="dropdown">
+        <a href="#" class="d-block text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown">
+          <img src="https://cdn2.iconfinder.com/data/icons/font-awesome/1792/user-secret-512.png" alt="mdo" width="40" height="40" class="rounded-circle bg-white">
         </a>
-
-        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-          <li><a href="/" class="nav-link px-2 text-white">Home</a></li>
-          <li><a href="/secrets" class="nav-link px-2 text-white">Secrets</a></li>
-          <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
-          <li><a href="#" class="nav-link px-2 text-white">About</a></li>
-          <li><a href="#" class="nav-link px-2 text-white">Donate</a></li>
+        <ul class="dropdown-menu text-small" >
+          <li><a class="dropdown-item" href="/submit">New secret...</a></li>
+          <li><a class="dropdown-item" href="/my-secrets">My Secrets</a></li>
+          <li><a class="dropdown-item" href="/my-profile">Profile</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/logout">Sign out</a></li>
         </ul>
-
-        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
-          <input type="search" class="form-control form-control-dark" placeholder="Search...">
-        </form>
-
-        
-        <% if (!loggedIn) {%>
-          <!-- If the user is not logged in -->
-          <div class="text-end">
-            <a class="btn btn-outline-light me-2" href="/login" role="button">Login</a>
-            <a class="btn btn-warning" href="/register" role="button">Sign-up</a>
-          </div>
-        <%} else {%>
-        <!-- If the user is logged in -->
-        <div class="dropdown text-end">
-          <a href="#" class="d-block text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown">
-            <img src="https://static.vecteezy.com/system/resources/thumbnails/007/691/078/small/alien-face-tee-stump-humanoid-martian-head-print-futuristic-space-invader-paranormal-fantasy-cartoon-emblem-illustration-vector.jpg" alt="mdo" width="40" height="40" class="rounded-circle">
-          </a>
-          <ul class="dropdown-menu text-small" >
-            <li><a class="dropdown-item" href="/submit">New secret...</a></li>
-            <li><a class="dropdown-item" href="/my-secrets">My Secrets</a></li>
-            <li><a class="dropdown-item" href="/my-profile">Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/logout">Sign out</a></li>
-          </ul>
-        </div>
-    <%}%>
-
       </div>
+      <%}%>
     </div>
-  </header>
+
+  </div>
+</header>
