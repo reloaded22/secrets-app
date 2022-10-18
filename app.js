@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
-const axios = require("axios"); // If I add .default I get undefined
+
 
 const app = express();
 app.use(bodyParser.urlencoded({extended:true}));
@@ -167,7 +167,7 @@ app.post("/submit",(req,res)=>{
         console.log(err);
       } else {
         console.log("Secret saved successfully\n");
-        res.redirect("/submit");
+        res.redirect("/my-secrets");
       }
     }
   );
@@ -241,10 +241,6 @@ app.post("/delete", (req, res) => {
             // When using this method we must SAVE the found user after updating it, otherwise the database doesn't update:
             user.save(()=>{
               console.log("\nChanges saved (user deleted) successfully\n");
-/*               res.render("my-secrets", {
-                secrets: req.user.secrets,
-                loggedIn: req.isAuthenticated(),
-              }); */
               res.redirect("/my-secrets");
             });
           }
