@@ -9,6 +9,33 @@ body {
   padding-bottom: 80px;
 }
 
+.card {
+  min-height: 150px;
+  position: relative;
+}
+
+.delete {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 5px;
+  /* display: none; */
+  visibility: hidden;
+}
+
+.edit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 5px;
+  /* display: none; */
+  visibility: hidden;
+}
+
+.card:hover .delete, .card:hover .edit  {
+  visibility: visible;
+}
+
 .footer {
   position: absolute;
   bottom: 0;

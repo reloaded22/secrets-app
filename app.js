@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+const axios = require("axios"); // If I add .default I get undefined
 
 const app = express();
 app.use(bodyParser.urlencoded({extended:true}));
@@ -150,7 +151,7 @@ app.get("/submit",(req,res)=>{
     res.redirect("/login");
   };
   
-})
+});
 
 app.post("/submit",(req,res)=>{
   // To know which user is the current one we can use the passport module
@@ -220,6 +221,99 @@ app.get("/my-profile", (req,res) => {
     res.redirect("/login");
   }
 });
+/////////////////////////////////////////////////////////////////////
+
+app.post("/delete", (req, res) => {
+  const index = req.body.index;
+  if (req.isAuthenticated()) {
+    console.log(req.user.secrets[index]);
+    User.findOne(
+      {_id: req.user._id},
+      (err,user)=>{
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("No hubo error buscando al user\n");
+          console.log(`user: ${user}\n`);
+          if (user) {
+            console.log(`user.secrets: ${user.secrets}\n`);
+            user.secrets.splice(index, 1);
+            // When using this method we must SAVE the found user after updating it, otherwise the database doesn't update:
+            user.save(()=>{
+              console.log("\nChanges saved (user deleted) successfully\n");
+/*               res.render("my-secrets", {
+                secrets: req.user.secrets,
+                loggedIn: req.isAuthenticated(),
+              }); */
+              res.redirect("/my-secrets");
+            });
+          }
+        }
+      }
+    );
+  } else {
+    res.redirect("/login");
+  }
+});
+
+/////////////////////////////////////////////////////////////////////
+
+app.post("/edit-secret", (req, res)=>{
+  if (req.isAuthenticated()) {
+    console.log("User is logged in\n");
+    const index = req.body.index;
+    console.log(req.user.secrets[index]);
+    res.render("edit-secret", {
+      loggedIn: req.isAuthenticated(),
+      index: index,
+      secret: req.user.secrets[index],
+    });
+  } else {
+    console.log("User needs to login to see the requested page\n");
+    res.redirect("/login");
+  };
+});
+
+app.post("/submit-update", (req, res)=> {
+  const { index, secret } = req.body;
+  const oldSecret = req.user.secrets[index];
+
+  // First and Best Option: Update database directly and then redirect
+  /*   User.updateOne(
+    // Find this _id and then inside the secrets array match oldSecret:
+    { _id: req.user._id, secrets: oldSecret },
+    // Then set the value of the item matched to secret:
+    { $set: { "secrets.$": secret } },
+    (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Secret updated successfully\n");
+        res.redirect("/my-secrets");
+      }
+    }
+  ); */
+
+  // Second Option: Update with JavaScript and then save changes
+  User.findOne({ _id: req.user._id }, (err, user) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("No hubo error buscando al user\n");
+      console.log(`user: ${user}\n`);
+      if (user) {
+        console.log(`user.secrets: ${user.secrets}\n`);
+        user.secrets.splice(index, 1, secret);
+        // When using this method we must SAVE the found user after updating it, otherwise the database doesn't update:
+        user.save(() => {
+          console.log("Secret updated successfully\n");
+          res.redirect("/my-secrets");
+        });
+      }
+    }
+  });
+});
+
 /////////////////////////////////////////////////////////////////////
 
 app.listen("3000", ()=>{
