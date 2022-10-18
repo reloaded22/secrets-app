@@ -2,13 +2,10 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-// https://stackoverflow.com/questions/67118227/whats-the-purpose-of-requiring-ejs
-// const ejs = require("ejs");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
-
 
 const app = express();
 app.use(bodyParser.urlencoded({extended:true}));
@@ -29,8 +26,6 @@ app.use(passport.session());
 /////////////////////////////////////////////////////////////////////
 
 mongoose.connect("mongodb://localhost:27017/userDB");
-// https://mongoosejs.com/docs/5.x/docs/deprecations.html
-// mongoose.set("useCreateIndex", true);
 
 const userSchema = new mongoose.Schema({
   email: String,
@@ -158,7 +153,7 @@ app.post("/submit",(req,res)=>{
   // which saves the user's details into the request variable
   // console.log(req.user);
 
-  // First way: (My way ===> Updating with MongoDB)
+  // First way:
   User.updateOne(
     { _id: req.user._id },
     { $push: { secrets: req.body.secret } },
@@ -172,7 +167,7 @@ app.post("/submit",(req,res)=>{
     }
   );
 
-  // Second way: (Updating with JavaScript array methods and saving modified document with save())
+  // Second way:
 /*     User.findOne(
     {_id: req.user._id},
     (err,user)=>{
@@ -224,29 +219,43 @@ app.get("/my-profile", (req,res) => {
 /////////////////////////////////////////////////////////////////////
 
 app.post("/delete", (req, res) => {
-  const index = req.body.index;
+  
   if (req.isAuthenticated()) {
-    console.log(req.user.secrets[index]);
-    User.findOne(
+    const index = req.body.index;
+    const oldSecret = req.user.secrets[index];
+    console.log(`Secret to be deleted: ${oldSecret}\n`);
+
+    // First way:
+    User.updateOne(
+      { _id: req.user._id }, 
+      { $pull: {secrets: oldSecret }}, (err) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Secret deleted successfully\n");
+        res.redirect("/my-secrets");
+      }
+    });
+
+    // Second way:
+/*     User.findOne(
       {_id: req.user._id},
       (err,user)=>{
         if (err) {
           console.log(err);
         } else {
-          console.log("No hubo error buscando al user\n");
           console.log(`user: ${user}\n`);
           if (user) {
-            console.log(`user.secrets: ${user.secrets}\n`);
+            console.log(`Secret to be deleted: ${user.secrets[index]}\n`);
             user.secrets.splice(index, 1);
-            // When using this method we must SAVE the found user after updating it, otherwise the database doesn't update:
             user.save(()=>{
-              console.log("\nChanges saved (user deleted) successfully\n");
+              console.log("Secret deleted successfully\n");
               res.redirect("/my-secrets");
             });
           }
         }
       }
-    );
+    ); */
   } else {
     res.redirect("/login");
   }
@@ -274,11 +283,9 @@ app.post("/submit-update", (req, res)=> {
   const { index, secret } = req.body;
   const oldSecret = req.user.secrets[index];
 
-  // First and Best Option: Update database directly and then redirect
-  /*   User.updateOne(
-    // Find this _id and then inside the secrets array match oldSecret:
+  // First way:
+    User.updateOne(
     { _id: req.user._id, secrets: oldSecret },
-    // Then set the value of the item matched to secret:
     { $set: { "secrets.$": secret } },
     (err) => {
       if (err) {
@@ -288,10 +295,10 @@ app.post("/submit-update", (req, res)=> {
         res.redirect("/my-secrets");
       }
     }
-  ); */
+  );
 
-  // Second Option: Update with JavaScript and then save changes
-  User.findOne({ _id: req.user._id }, (err, user) => {
+  // Second way:
+/*   User.findOne({ _id: req.user._id }, (err, user) => {
     if (err) {
       console.log(err);
     } else {
@@ -307,7 +314,7 @@ app.post("/submit-update", (req, res)=> {
         });
       }
     }
-  });
+  }); */
 });
 
 /////////////////////////////////////////////////////////////////////
@@ -317,5 +324,8 @@ app.listen("3000", ()=>{
 });
 
 /////////////////////////////////////////////////////////////////////
+// NOTES:
 // Password Documentation:
 // https://www.passportjs.org/tutorials/password/
+// The passport module saves the user's details into the request variable
+// req.user
