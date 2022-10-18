@@ -2,10 +2,10 @@
     <div class="card-body d-flex align-items-center justify-content-center">
         <h5 class="card-title"><%=secret%></h5>
         <form action="/delete" method="post">
-            <button class="btn btn-danger btn-sm delete" name="index" value=<%=index%>>X</button>
+            <button class="btn btn-outline-danger btn-sm delete" name="index" value=<%=index%> title="Delete"><i class="fa-regular fa-trash-can"></i></button>
         </form>
         <form action="/edit-secret" method="post">
-            <button class="btn btn-warning btn-sm edit" name="index" value=<%=index%>>/</button>
+            <button class="btn btn-outline-warning btn-sm edit" name="index" value=<%=index%> title="Edit"><i class="fa-regular fa-pen-to-square"></i></button>
         </form>
 
     </div>
