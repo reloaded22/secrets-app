@@ -11,7 +11,10 @@ body {
 
 .card {
   min-height: 150px;
-  position: relative;
+}
+
+.card-title {
+  width:90%;
 }
 
 .delete {
