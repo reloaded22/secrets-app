@@ -40,10 +40,12 @@ body {
 .card:hover > .my-cards {
   margin-top: 40px;
   background-color: black;
+  border-radius: 5px;
 }
 
 .card:hover > .all-cards {
   background-color: black;
+  border-radius: 5px;
 }
 
 .text-color-1 {
@@ -52,6 +54,10 @@ body {
 
 .text-color-2 {
   color: deeppink;
+}
+
+.about-text {
+  text-align: justify;
 }
 
 .footer {
