@@ -6,18 +6,18 @@
   <h1 class="display-3">Secrets</h1>
   <p class="lead">Don't keep your secrets, share them anonymously!</p>
   <hr />
-  <div id="secretsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-pause="false" data-bs-interval="4000">
+  <div id="secretsCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-pause="false" data-bs-interval="4000" onclick="location.href='/secrets'">
     <div class="carousel-inner w-75 mx-auto">
       <%let count=-1%>
       <%users.forEach((user, i)=>{%>
       <%user.secrets.forEach((secret, j)=>{%>
       <%count +=1%>
       <% if (count%2===0) { %>
-      <div class="carousel-item <%= (i===0 && j===0) && "active" %> text-capitalize text-danger px-1">
+      <div class="carousel-item <%= (i===0 && j===0) && "active" %> text-capitalize text-color-1 px-1">
         <%- include('card', {secret:secret}) %>
       </div>
       <%} else {%>
-      <div class="carousel-item <%= (i===0 && j===0) && "active" %> text-capitalize text-info px-1">
+      <div class="carousel-item <%= (i===0 && j===0) && "active" %> text-capitalize text-color-2 px-1">
         <%- include('card', {secret:secret}) %>
       </div>
       <%}%>

@@ -37,6 +37,23 @@ body {
   visibility: visible;
 }
 
+.card:hover > .my-cards {
+  margin-top: 40px;
+  background-color: black;
+}
+
+.card:hover > .all-cards {
+  background-color: black;
+}
+
+.text-color-1 {
+  color: aqua;
+}
+
+.text-color-2 {
+  color: deeppink;
+}
+
 .footer {
   position: absolute;
   bottom: 0;
