@@ -75,13 +75,12 @@ app.post("/login", (req, res) => {
   passport.authenticate("local",
       (err, user, options) => {
         if (user) {
-          console.log(req.isAuthenticated());
           req.login(user, (error)=>{
             if (error) {
               res.send(error);
             } else {
               console.log("Successfully authenticated");
-              console.log(req.isAuthenticated());
+              /* console.log(req.isAuthenticated()); */
               res.redirect("/secrets");
             };
           });
@@ -201,7 +200,7 @@ app.post("/submit",(req,res)=>{
 /////////////////////////////////////////////////////////////////////
 app.get("/my-secrets", (req,res) => {
   if (req.isAuthenticated()) {  
-    console.log(req.user.secrets);
+    /* console.log(req.user.secrets); */
     res.render("my-secrets", {
       secrets: req.user.secrets,
       loggedIn: req.isAuthenticated(),
