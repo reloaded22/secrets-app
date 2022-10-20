@@ -24,8 +24,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 /////////////////////////////////////////////////////////////////////
-
-mongoose.connect("mongodb://localhost:27017/userDB");
+const username = process.env.DB_USER;
+const password = process.env.DB_PASS;
+const db_name = "secrets-db";
+mongoose.connect(
+  `mongodb+srv://${username}:${password}@cluster0.i2x7mhy.mongodb.net/${db_name}?retryWrites=true&w=majority`
+);
 
 const userSchema = new mongoose.Schema({
   email: String,
