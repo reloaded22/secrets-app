@@ -3,59 +3,64 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const passport = require("passport");
 const { readSecretsMongo, authenticateMongoUser, registerMongoUser, addMongoSecret, updateMongoSecret, deleteMongoSecret } = require("../../src/mongo");
+const serverless = require("serverless-http");
+const path = require("path");
 
 const app = express();
+const router = express.Router();
 app.use(bodyParser.urlencoded({extended:true}));
 app.set("view engine", "ejs");
-app.use(express.static("public"));
+app.engine("ejs", require("ejs").__express); // To fix 'ejs' module not found
+router.use(express.static(path.join(__dirname, "../../public")));
+app.use("/.netlify/functions/app", router);
 
 // Use the express-session module ////
-app.use(session({
+router.use(session({
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false
 }));
 // Initialize passport ///////////////
-app.use(passport.initialize());
-app.use(passport.session());
+router.use(passport.initialize());
+router.use(passport.session());
 //////////////////////////////////////
 
 // ROUTES ////////////////////////////
 
-app.get("/",(req,res)=>{
+router.get("/",(req,res)=>{
     readSecretsMongo(req, res, "home");
 }); 
 //////////////////////////////////////
-app.get("/about", (req, res) => {
+router.get("/about", (req, res) => {
   res.render("about", {
     loggedIn: req.isAuthenticated(),
   });
 }); 
 //////////////////////////////////////
 let loginError = "";
-app.get("/login",(req, res) => {
+router.get("/login",(req, res) => {
   res.render("login", {
     loginError: loginError,
   });
 });
 
-app.post("/login", (req, res) => {
+router.post("/login", (req, res) => {
   authenticateMongoUser(req, res);
 });
 //////////////////////////////////////
-app.get("/secrets",(req,res)=>{
+router.get("/secrets",(req,res)=>{
   readSecretsMongo(req, res, "secrets");
 }); 
 //////////////////////////////////////
-app.get("/register",(req, res) => {
+router.get("/register",(req, res) => {
   res.render("register");
 });
 
-app.post("/register",(req,res)=>{
+router.post("/register",(req,res)=>{
   registerMongoUser(req, res);
 }); 
 //////////////////////////////////////
-app.get("/logout",(req,res)=>{
+router.get("/logout",(req,res)=>{
   req.logOut((err)=>{
     if (!err) {
       console.log("Successfully logged out\n");
@@ -66,7 +71,7 @@ app.get("/logout",(req,res)=>{
   });
 }); 
 //////////////////////////////////////
-app.get("/submit",(req,res)=>{
+router.get("/submit",(req,res)=>{
   if (req.isAuthenticated()) {
     res.render("submit", { loggedIn: req.isAuthenticated() });
   } else {
@@ -75,11 +80,11 @@ app.get("/submit",(req,res)=>{
   };
 });
 
-app.post("/submit",(req,res)=>{
+router.post("/submit",(req,res)=>{
   addMongoSecret(req, res);
 }); 
 //////////////////////////////////////
-app.get("/my-secrets", (req,res) => {
+router.get("/my-secrets", (req,res) => {
   if (req.isAuthenticated()) {  
     res.render("my-secrets", {
       secrets: req.user.secrets,
@@ -90,7 +95,7 @@ app.get("/my-secrets", (req,res) => {
   }
 });
 //////////////////////////////////////
-app.get("/my-profile", (req,res) => {
+router.get("/my-profile", (req,res) => {
   if (req.isAuthenticated()) {  
     res.render("my-profile", {
       email: req.user.username,
@@ -101,11 +106,11 @@ app.get("/my-profile", (req,res) => {
   }
 });
 //////////////////////////////////////
-app.post("/delete", (req, res) => {
+router.post("/delete", (req, res) => {
   deleteMongoSecret(req, res);
 });
 //////////////////////////////////////
-app.post("/edit-secret", (req, res)=>{
+router.post("/edit-secret", (req, res)=>{
   const index = req.body.index;
   if (req.isAuthenticated()) {
     res.render("edit-secret", {
@@ -119,10 +124,13 @@ app.post("/edit-secret", (req, res)=>{
   };
 });
 //////////////////////////////////////
-app.post("/submit-update", (req, res)=> {
+router.post("/submit-update", (req, res)=> {
   updateMongoSecret(req, res);
 });
 //////////////////////////////////////
+
+// Export lambda function
+module.exports.handler = serverless(app);
 
 // Server Connection //
 app.listen("3000", ()=>{

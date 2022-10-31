@@ -132,3 +132,6 @@ dist
 .pnp.*
 # Local Netlify folder
 .netlify
+
+# Netligy build folder
+netlify/functions-build/
