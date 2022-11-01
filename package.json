@@ -4,14 +4,15 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start:node": "nodemon ./netlify/functions/app.js",
-    "start:lambda": "netlify-lambda serve netlify/functions",
-    "build:lambda": "netlify-lambda build netlify/functions"
+    "start:node": "nodemon ./functions/app.js",
+    "start:lambda": "ntl dev",
+    "build:lambda": "netlify-lambda build functions"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.0",
+    "cookie-session": "^2.0.0",
     "dotenv": "^16.0.2",
     "ejs": "^3.1.8",
     "express": "^4.18.1",

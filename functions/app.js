@@ -1,8 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const session = require("express-session");
+// const session = require("express-session");
+const session = require("cookie-session");
 const passport = require("passport");
-const { readSecretsMongo, authenticateMongoUser, registerMongoUser, addMongoSecret, updateMongoSecret, deleteMongoSecret } = require("../../src/mongo");
+const { readSecretsMongo, authenticateMongoUser, registerMongoUser, addMongoSecret, updateMongoSecret, deleteMongoSecret } = require("../src/mongo");
 const serverless = require("serverless-http");
 const path = require("path");
 
@@ -64,7 +65,7 @@ router.get("/logout",(req,res)=>{
   req.logOut((err)=>{
     if (!err) {
       console.log("Successfully logged out\n");
-      res.redirect("/");
+      res.redirect("/.netlify/functions/app");
     } else {
       console.log(err);
     };
@@ -76,7 +77,7 @@ router.get("/submit",(req,res)=>{
     res.render("submit", { loggedIn: req.isAuthenticated() });
   } else {
     console.log("User needs to login to see the requested page\n");
-    res.redirect("/login");
+    res.redirect("/.netlify/functions/app/login");
   };
 });
 
@@ -91,7 +92,7 @@ router.get("/my-secrets", (req,res) => {
       loggedIn: req.isAuthenticated(),
     });
   } else {
-    res.redirect("/login");
+    res.redirect("/.netlify/functions/app/login");
   }
 });
 //////////////////////////////////////
@@ -102,7 +103,7 @@ router.get("/my-profile", (req,res) => {
       loggedIn: req.isAuthenticated(),
     });
   } else {
-    res.redirect("/login");
+    res.redirect("/.netlify/functions/app/login");
   }
 });
 //////////////////////////////////////
@@ -120,7 +121,7 @@ router.post("/edit-secret", (req, res)=>{
     });
   } else {
     console.log("User needs to login to see the requested page\n");
-    res.redirect("/login");
+    res.redirect("/.netlify/functions/app/login");
   };
 });
 //////////////////////////////////////
@@ -133,6 +134,6 @@ router.post("/submit-update", (req, res)=> {
 module.exports.handler = serverless(app);
 
 // Server Connection //
-app.listen("3000", ()=>{
-    console.log("Server running on port 3000 🚀\n");
-});
+// app.listen("5000", ()=>{
+//     console.log("Server running on port 5000 🚀\n");
+// });

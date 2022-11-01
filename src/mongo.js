@@ -51,7 +51,7 @@ const authenticateMongoUser = (req, res) => {
                     res.send(error);
                 } else {
                     console.log("Successfully authenticated");
-                    res.redirect("/secrets");
+                    res.redirect("/.netlify/functions/app/secrets");
                 }
             });
         } else {
@@ -69,11 +69,11 @@ const registerMongoUser = (req, res) => {
       if (!err) {
         console.log("New user saved successfully\n");
         passport.authenticate("local")(req, res, () => {
-          res.redirect("/secrets");
+          res.redirect("/.netlify/functions/app/secrets");
         });
       } else {
         console.log(err);
-        res.redirect("/register");
+        res.redirect("/.netlify/functions/app/register");
       };
     }
   );
@@ -81,7 +81,6 @@ const registerMongoUser = (req, res) => {
 
 /////////////////////////////////////////////////////////////////////
 
-//app.post("/submit", (req, res) => {
 const addMongoSecret = (req, res) => {
     User.updateOne(
         { _id: req.user._id },
@@ -91,7 +90,7 @@ const addMongoSecret = (req, res) => {
                 console.log(err);
             } else {
                 console.log("Secret saved successfully\n");
-                res.redirect("/my-secrets");
+                res.redirect("/.netlify/functions/app/my-secrets");
             };
         }
     ); 
@@ -110,12 +109,12 @@ const deleteMongoSecret = (req, res) => {
           console.log(err);
         } else {
           console.log("Secret deleted successfully\n");
-          res.redirect("/my-secrets");
+          res.redirect("/.netlify/functions/app/my-secrets");
         };
       }
     );
   } else {
-    res.redirect("/login");
+    res.redirect("/.netlify/functions/app/login");
   };
 };
 
@@ -131,7 +130,7 @@ const updateMongoSecret = (req, res) => {
             console.log(err);
             } else {
             console.log("Secret updated successfully\n");
-            res.redirect("/my-secrets");
+            res.redirect("/.netlify/functions/app/my-secrets");
             };
         }
     );
